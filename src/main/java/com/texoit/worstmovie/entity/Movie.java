@@ -1,12 +1,16 @@
 package com.texoit.worstmovie.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -25,16 +29,20 @@ public class Movie implements BasicEntity, Serializable {
     @Column(name = "YEAR")
     private Integer year;
 
-    @ManyToOne
-    @JoinColumn(name = "SEQ_STUDIO")
-    private Studio studio;
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(name="MOVIE_STUDIO", joinColumns=
+        {@JoinColumn(name="SEQ_MOVIE")}, inverseJoinColumns=
+        {@JoinColumn(name="SEQ_DOMAIN")})
+    private List<Studio> studios = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "SEQ_PRODUCER")
-    private Producer producer;
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(name="MOVIE_PRODUCER", joinColumns=
+        {@JoinColumn(name="SEQ_MOVIE")}, inverseJoinColumns=
+        {@JoinColumn(name="SEQ_DOMAIN")})
+    private List<Producer> producers = new ArrayList<>();
 
     @Column(name = "FLG_WINNER")
-    private boolean isWin;
+    private Boolean winner;
 
     @Override
     public Long getId() {
@@ -62,28 +70,28 @@ public class Movie implements BasicEntity, Serializable {
         this.year = year;
     }
 
-    public Studio getStudio() {
-        return studio;
+    public List<Studio> getStudios() {
+        return studios;
     }
 
-    public void setStudio(Studio studio) {
-        this.studio = studio;
+    public void setStudios(List<Studio> studios) {
+        this.studios = studios;
     }
 
-    public Producer getProducer() {
-        return producer;
+    public List<Producer> getProducers() {
+        return producers;
     }
 
-    public void setProducer(Producer producer) {
-        this.producer = producer;
+    public void setProducers(List<Producer> producers) {
+        this.producers = producers;
     }
 
-    public boolean isWin() {
-        return isWin;
+    public Boolean getWinner() {
+        return winner;
     }
 
-    public void setWin(boolean win) {
-        isWin = win;
+    public void setWinner(Boolean winner) {
+        this.winner = winner;
     }
 
     @Override

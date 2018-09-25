@@ -1,35 +1,82 @@
 package com.texoit.worstmovie.service.impl;
 
 import com.texoit.worstmovie.entity.Movie;
+import com.texoit.worstmovie.entity.Producer;
+import com.texoit.worstmovie.entity.Studio;
+import com.texoit.worstmovie.entity.dto.MovieDTO;
+import com.texoit.worstmovie.entity.dto.YearsDTO;
+import com.texoit.worstmovie.entity.mapper.MovieMapper;
+import com.texoit.worstmovie.entity.mapper.YearsMapper;
+import com.texoit.worstmovie.exception.MovieIsWinnerException;
 import com.texoit.worstmovie.repository.MovieRepository;
 import com.texoit.worstmovie.service.MovieService;
 import com.texoit.worstmovie.service.ProducerService;
 import com.texoit.worstmovie.service.StudioService;
+import com.texoit.worstmovie.util.StringUtil;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class MovieServiceImpl extends BaseServiceImpl<MovieRepository, Movie> implements MovieService {
 
+    //http://localhost:8080/h2-console
+
     private StudioService studioService;
     private ProducerService producerService;
+    private MovieMapper mapper;
+    private YearsMapper yearsMapper;
 
-    public MovieServiceImpl(StudioService studioService, ProducerService producerService) {
+    public MovieServiceImpl(StudioService studioService, ProducerService producerService, MovieMapper mapper, YearsMapper yearsMapper) {
         this.studioService = studioService;
         this.producerService = producerService;
+        this.mapper = mapper;
+        this.yearsMapper = yearsMapper;
     }
 
     @Override
-    public List<Movie> findAllByYear(Integer year) {
-        return this.repository.findAllByYear(year);
+    public List<MovieDTO> findAllByYear(Integer year) {
+        return this.repository.findAllByYear(year)
+            .stream()
+            .map(mapper::movieToMovieDTO)
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MovieDTO> findAllByYearAndWinner(Integer year, Boolean winner) {
+        return this.repository.findAllByYearAndWinner(year, winner)
+            .stream()
+            .map(mapper::movieToMovieDTO)
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public YearsDTO findAllYearsByWinnerHigherOne(Integer minCount) {
+        List<Object[]> found = this.repository.findAllYearsByWinnerHigherOne(minCount);
+        return yearsMapper.objListToYearsDTO(found);
+    }
+
+    @Override
+    public void delete(Long id) throws MovieIsWinnerException {
+        Optional<Movie> found = this.findById(id);
+        if(found.isPresent()) {
+            if(!found.get().getWinner()) {
+                this.repository.delete(found.get());
+            } else {
+                throw new MovieIsWinnerException();
+            }
+        }
     }
 
     @Override
@@ -44,11 +91,8 @@ public class MovieServiceImpl extends BaseServiceImpl<MovieRepository, Movie> im
                     Movie movie = new Movie();
                     movie.setTitle(record.get("title"));
                     movie.setYear(Integer.parseInt(record.get("year")));
-                    movie.setWin(!record.get("winner").trim().isEmpty());
-//                    ",|^and$"
-//                    https://www.thoughts-on-java.org/hibernate-tips-map-bidirectional-many-many-association/
-                    movie.setProducer(this.producerService.findOrCreate(record.get("producers")));
-                    movie.setStudio(this.studioService.findOrCreate(record.get("studios")));
+                    movie.setWinner(!record.get("winner").trim().isEmpty());
+                    this.processRelationships(movie, record);
                     this.save(movie);
                 });
             } catch (IOException e) {
@@ -58,5 +102,28 @@ public class MovieServiceImpl extends BaseServiceImpl<MovieRepository, Movie> im
         return null;
     }
 
+    private void processRelationships(Movie movie, CSVRecord record) {
+        this.processProducers(movie, record);
+        this.processStudios(movie, record);
+    }
 
+    private void processProducers(Movie movie, CSVRecord record) {
+        List<Producer> producers = new ArrayList<>();
+        List<String> producersNames = StringUtil.splitStringGetMappedValidValues(record.get("producers"),
+                ",|and",
+                str -> !str.trim().isEmpty(),
+            String::trim);
+        producersNames.forEach(producerName -> producers.add(this.producerService.findOrCreate(producerName)));
+        movie.setProducers(producers);
+    }
+
+    private void processStudios(Movie movie, CSVRecord record) {
+        List<Studio> studios = new ArrayList<>();
+        List<String> studiosNames = StringUtil.splitStringGetMappedValidValues(record.get("studios"),
+                ",|and",
+                str -> !str.trim().isEmpty(),
+                String::trim);
+        studiosNames.forEach(studioName -> studios.add(this.studioService.findOrCreate(studioName)));
+        movie.setStudios(studios);
+    }
 }

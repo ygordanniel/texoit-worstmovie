@@ -1,6 +1,8 @@
 package com.texoit.worstmovie.entity.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MovieDTO implements Serializable {
 
@@ -9,9 +11,9 @@ public class MovieDTO implements Serializable {
     private Long id;
     private String title;
     private Integer year;
-    private StudioDTO studio;
-    private ProducerDTO producer;
-    private boolean isWin;
+    private List<StudioDTO> studios = new ArrayList<>();
+    private List<ProducerDTO> producers = new ArrayList<>();
+    private Boolean winner;
 
     public Long getId() {
         return id;
@@ -37,27 +39,27 @@ public class MovieDTO implements Serializable {
         this.year = year;
     }
 
-    public StudioDTO getStudio() {
-        return studio;
+    public List<StudioDTO> getStudios() {
+        return studios;
     }
 
-    public void setStudio(StudioDTO studio) {
-        this.studio = studio;
+    public void setStudios(List<StudioDTO> studios) {
+        this.studios = studios;
     }
 
-    public ProducerDTO getProducer() {
-        return producer;
+    public List<ProducerDTO> getProducers() {
+        return producers;
     }
 
-    public void setProducer(ProducerDTO producer) {
-        this.producer = producer;
+    public void setProducers(List<ProducerDTO> producers) {
+        this.producers = producers;
     }
 
-    public boolean isWin() {
-        return isWin;
+    public Boolean getWinner() {
+        return winner;
     }
 
-    public void setWin(boolean win) {
-        isWin = win;
+    public void setWinner(Boolean winner) {
+        this.winner = winner;
     }
 }

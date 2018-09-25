@@ -12,7 +12,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.texoit.worstmovie.service", "com.texoit.worstmovie.web.rest"})
+@ComponentScan(basePackages = {"com.texoit.worstmovie.service", "com.texoit.worstmovie.web.rest", "com.texoit.worstmovie.entity.mapper"})
 @EntityScan(basePackages = {"com.texoit.worstmovie.entity"})
 public class WorstmovieApplication {
 
