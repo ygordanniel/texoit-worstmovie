@@ -7,5 +7,5 @@ An webservice to store all the worst movies running for a _Golden Raspberry Awar
 
 To run the webservice simply download the latest [Release](https://github.com/ygordanniel/texoit-worstmovie/releases) and execute the following command
 ```
-java -jar path/to/file/worstmovie-x.y.z-SNAPSHOT.jar
+java -jar path/to/file/worstmovie-latest-SNAPSHOT.jar
 ```
