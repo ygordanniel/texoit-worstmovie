@@ -33,6 +33,8 @@ public class MovieServiceImpl extends BaseServiceImpl<MovieRepository, Movie> im
 
     //http://localhost:8080/h2-console
 
+    public static final String SPLIT_REGEX = ",|(?:^|\\W)and(?:$|\\W)";
+
     private StudioService studioService;
     private ProducerService producerService;
     private MovieMapper mapper;
@@ -110,7 +112,7 @@ public class MovieServiceImpl extends BaseServiceImpl<MovieRepository, Movie> im
     private void processProducers(Movie movie, CSVRecord record) {
         List<Producer> producers = new ArrayList<>();
         List<String> producersNames = StringUtil.splitStringGetMappedValidValues(record.get("producers"),
-                ",|and",
+                SPLIT_REGEX,
                 str -> !str.trim().isEmpty(),
             String::trim);
         producersNames.forEach(producerName -> producers.add(this.producerService.findOrCreate(producerName)));
@@ -120,7 +122,7 @@ public class MovieServiceImpl extends BaseServiceImpl<MovieRepository, Movie> im
     private void processStudios(Movie movie, CSVRecord record) {
         List<Studio> studios = new ArrayList<>();
         List<String> studiosNames = StringUtil.splitStringGetMappedValidValues(record.get("studios"),
-                ",|and",
+                SPLIT_REGEX,
                 str -> !str.trim().isEmpty(),
                 String::trim);
         studiosNames.forEach(studioName -> studios.add(this.studioService.findOrCreate(studioName)));

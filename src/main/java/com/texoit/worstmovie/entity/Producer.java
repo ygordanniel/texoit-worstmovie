@@ -1,11 +1,6 @@
 package com.texoit.worstmovie.entity;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
@@ -16,7 +11,7 @@ public class Producer extends Domain implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinTable(name="MOVIE_STUDIO", joinColumns=
+    @JoinTable(name="MOVIE_PRODUCER", joinColumns=
         {@JoinColumn(name="SEQ_DOMAIN")}, inverseJoinColumns=
         {@JoinColumn(name="SEQ_MOVIE")})
     private List<Movie> movies;
