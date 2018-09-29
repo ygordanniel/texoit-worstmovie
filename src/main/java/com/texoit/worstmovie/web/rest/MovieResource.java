@@ -5,17 +5,13 @@ import com.texoit.worstmovie.entity.dto.MovieDTO;
 import com.texoit.worstmovie.entity.dto.YearsDTO;
 import com.texoit.worstmovie.exception.MovieIsWinnerException;
 import com.texoit.worstmovie.service.MovieService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 
@@ -61,7 +57,13 @@ public class MovieResource {
     }
 
     @PutMapping("/import/csv")
-    public ResponseEntity<Integer> importFromCsv(@RequestPart(name = "csv", required = false) MultipartFile[] csv) {
-        return ResponseEntity.ok(this.movieService.importFromCsv(csv));
+    public ResponseEntity<?> importFromCsv(@RequestPart(name = "csv", required = false) MultipartFile[] csv) {
+        try {
+            this.movieService.importFromCsv(csv);
+            return ResponseEntity.created(new URI("http://localhost:8080/api/movie")).build();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
