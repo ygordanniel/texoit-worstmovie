@@ -1,7 +1,9 @@
 package com.texoit.worstmovie.service.impl;
 
 import com.texoit.worstmovie.entity.Studio;
+import com.texoit.worstmovie.entity.dto.StudioDTO;
 import com.texoit.worstmovie.entity.dto.StudiosWinCountDTO;
+import com.texoit.worstmovie.entity.mapper.StudioMapper;
 import com.texoit.worstmovie.entity.mapper.StudiosWinCountMapper;
 import com.texoit.worstmovie.repository.StudioRepository;
 import com.texoit.worstmovie.service.StudioService;
@@ -14,16 +16,18 @@ import java.util.Objects;
 @Transactional
 public class StudioServiceImpl extends BaseServiceImpl<StudioRepository, Studio> implements StudioService {
 
-    private StudiosWinCountMapper mapper;
+    private StudioMapper mapper;
+    private StudiosWinCountMapper studiosWinCountMapper;
 
-    public StudioServiceImpl(StudiosWinCountMapper mapper, StudioRepository repository) {
+    public StudioServiceImpl(StudioMapper mapper, StudiosWinCountMapper studiosWinCountMapper, StudioRepository repository) {
         super(repository);
         this.mapper = mapper;
+        this.studiosWinCountMapper = studiosWinCountMapper;
     }
 
     @Override
-    public Studio findByName(String name) {
-        return this.repository.findByName(name);
+    public StudioDTO findByName(String name) {
+        return mapper.studioToStudioDTO(this.repository.findByName(name));
     }
 
     @Override
@@ -39,6 +43,6 @@ public class StudioServiceImpl extends BaseServiceImpl<StudioRepository, Studio>
 
     @Override
     public StudiosWinCountDTO findStudioAndWinCount() {
-        return this.mapper.objListToStudiosWinCountDTO(this.repository.findStudioAndWinCount());
+        return this.studiosWinCountMapper.objListToStudiosWinCountDTO(this.repository.findStudioAndWinCount());
     }
 }
