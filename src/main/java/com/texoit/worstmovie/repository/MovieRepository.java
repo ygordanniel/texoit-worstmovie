@@ -15,5 +15,5 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
         "WHERE FLG_WINNER IS TRUE " +
         "GROUP BY YEAR HAVING COUNT(*) >= ?1 " +
         "ORDER BY YEAR", nativeQuery = true)
-    List<Object[]> findAllYearsByWinnerHigherOne(Integer minCount);
+    List<Object[]> findAllYearsByWinnerCount(Integer minCount);
 }
