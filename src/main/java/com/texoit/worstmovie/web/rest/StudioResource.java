@@ -1,5 +1,6 @@
 package com.texoit.worstmovie.web.rest;
 
+import com.texoit.worstmovie.entity.dto.ResponseDTO;
 import com.texoit.worstmovie.entity.dto.StudiosWinCountDTO;
 import com.texoit.worstmovie.service.StudioService;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class StudioResource {
     }
 
     @GetMapping("/win-count")
-    public ResponseEntity<StudiosWinCountDTO> findStudioAndWinCount() {
-        return ResponseEntity.ok(studioService.findStudioAndWinCount());
+    public ResponseEntity<ResponseDTO<StudiosWinCountDTO>> findStudioAndWinCount() {
+        return ResponseEntity.ok(new ResponseDTO<>(studioService.findStudioAndWinCount()));
     }
 }

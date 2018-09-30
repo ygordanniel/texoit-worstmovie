@@ -7,7 +7,7 @@ import com.texoit.worstmovie.entity.dto.MovieDTO;
 import com.texoit.worstmovie.entity.dto.YearsDTO;
 import com.texoit.worstmovie.entity.mapper.MovieMapper;
 import com.texoit.worstmovie.entity.mapper.YearsMapper;
-import com.texoit.worstmovie.exception.MovieIsWinnerException;
+import com.texoit.worstmovie.exception.*;
 import com.texoit.worstmovie.repository.MovieRepository;
 import com.texoit.worstmovie.service.MovieService;
 import com.texoit.worstmovie.service.ProducerService;
@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -70,20 +71,21 @@ public class MovieServiceImpl extends BaseServiceImpl<MovieRepository, Movie> im
     }
 
     @Override
-    public void delete(Long id) throws MovieIsWinnerException {
+    public void delete(Long id) throws BusinessException {
         Optional<Movie> found = this.findById(id);
         if(found.isPresent()) {
             if(!found.get().getWinner()) {
                 this.repository.delete(found.get());
             } else {
-                throw new MovieIsWinnerException();
+                throw BusinessExceptionFactory.buildException(BusinessExceptionEnum.MOVIE_IS_WINNER);
             }
         }
     }
 
     @Override
-    public Integer importFromCsv(MultipartFile[] multipartFile) {
+    public Integer importFromCsv(MultipartFile[] multipartFile) throws BusinessException {
         String[] HEADERS = {"year", "title", "studios", "producers", "winner"};
+        validateCsvFile(multipartFile);
         for (MultipartFile multipart : multipartFile) {
             try {
                 CSVParser parse = CSVParser.parse(multipart.getInputStream(),
@@ -127,5 +129,19 @@ public class MovieServiceImpl extends BaseServiceImpl<MovieRepository, Movie> im
                 String::trim);
         studiosNames.forEach(studioName -> studios.add(this.studioService.findOrCreate(studioName)));
         movie.setStudios(studios);
+    }
+
+    private void validateCsvFile(MultipartFile[] multipartFile) throws BusinessException {
+        if(Objects.isNull(multipartFile)) {
+            throw BusinessExceptionFactory.buildException(BusinessExceptionEnum.NO_FILE);
+        }
+        if(multipartFile.length > 1) {
+            throw BusinessExceptionFactory.buildException(BusinessExceptionEnum.MORE_THAN_ONE_CSV);
+        }
+        for (MultipartFile file : multipartFile) {
+            if(!file.getName().contains(".csv")) {
+                throw BusinessExceptionFactory.buildException(BusinessExceptionEnum.NOT_A_CSV);
+            }
+        }
     }
 }
