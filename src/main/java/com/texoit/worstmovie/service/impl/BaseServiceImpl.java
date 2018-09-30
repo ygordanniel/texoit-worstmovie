@@ -16,8 +16,11 @@ import java.util.Optional;
 @Transactional
 public abstract class BaseServiceImpl<R extends JpaRepository<EN, Long>, EN extends BasicEntity> implements BaseService<EN> {
 
-    @Autowired
-    R repository;
+    protected R repository;
+
+    public BaseServiceImpl(R repository) {
+        this.repository = repository;
+    }
 
     @Override
     public EN save(EN entity) {

@@ -16,7 +16,8 @@ public class StudioServiceImpl extends BaseServiceImpl<StudioRepository, Studio>
 
     private StudiosWinCountMapper mapper;
 
-    public StudioServiceImpl(StudiosWinCountMapper mapper) {
+    public StudioServiceImpl(StudiosWinCountMapper mapper, StudioRepository repository) {
+        super(repository);
         this.mapper = mapper;
     }
 

@@ -41,7 +41,8 @@ public class MovieServiceImpl extends BaseServiceImpl<MovieRepository, Movie> im
     private MovieMapper mapper;
     private YearsMapper yearsMapper;
 
-    public MovieServiceImpl(StudioService studioService, ProducerService producerService, MovieMapper mapper, YearsMapper yearsMapper) {
+    public MovieServiceImpl(StudioService studioService, ProducerService producerService, MovieMapper mapper, YearsMapper yearsMapper, MovieRepository repository) {
+        super(repository);
         this.studioService = studioService;
         this.producerService = producerService;
         this.mapper = mapper;
@@ -65,8 +66,8 @@ public class MovieServiceImpl extends BaseServiceImpl<MovieRepository, Movie> im
     }
 
     @Override
-    public YearsDTO findAllYearsByWinnerHigherOne(Integer minCount) {
-        List<Object[]> found = this.repository.findAllYearsByWinnerHigherOne(minCount);
+    public YearsDTO findAllYearsByWinnerCount(Integer minCount) {
+        List<Object[]> found = this.repository.findAllYearsByWinnerCount(minCount);
         return yearsMapper.objListToYearsDTO(found);
     }
 
@@ -83,25 +84,22 @@ public class MovieServiceImpl extends BaseServiceImpl<MovieRepository, Movie> im
     }
 
     @Override
-    public Integer importFromCsv(MultipartFile[] multipartFile) throws BusinessException {
+    public Integer importFromCsv(MultipartFile[] multipartFile) throws BusinessException, IOException {
         String[] HEADERS = {"year", "title", "studios", "producers", "winner"};
         validateCsvFile(multipartFile);
         for (MultipartFile multipart : multipartFile) {
-            try {
-                CSVParser parse = CSVParser.parse(multipart.getInputStream(),
-                    StandardCharsets.UTF_8,
-                    CSVFormat.DEFAULT.withDelimiter(';').withHeader(HEADERS).withFirstRecordAsHeader());
-                parse.getRecords().forEach(record -> {
-                    Movie movie = new Movie();
-                    movie.setTitle(record.get("title"));
-                    movie.setYear(Integer.parseInt(record.get("year")));
-                    movie.setWinner(!record.get("winner").trim().isEmpty());
-                    this.processRelationships(movie, record);
-                    this.save(movie);
-                });
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            CSVParser parse = CSVParser.parse(multipart.getInputStream(),
+                StandardCharsets.UTF_8,
+                CSVFormat.DEFAULT.withDelimiter(';').withHeader(HEADERS).withFirstRecordAsHeader());
+            parse.getRecords().forEach(record -> {
+                Movie movie = new Movie();
+                movie.setTitle(record.get("title"));
+                movie.setYear(Integer.parseInt(record.get("year")));
+                movie.setWinner(!record.get("winner").trim().isEmpty());
+                this.processRelationships(movie, record);
+                this.save(movie);
+            });
+
         }
         return null;
     }
@@ -136,10 +134,10 @@ public class MovieServiceImpl extends BaseServiceImpl<MovieRepository, Movie> im
             throw BusinessExceptionFactory.buildException(BusinessExceptionEnum.NO_FILE);
         }
         if(multipartFile.length > 1) {
-            throw BusinessExceptionFactory.buildException(BusinessExceptionEnum.MORE_THAN_ONE_CSV);
+            throw BusinessExceptionFactory.buildException(BusinessExceptionEnum.MORE_THAN_ONE_FILE);
         }
         for (MultipartFile file : multipartFile) {
-            if(!file.getName().contains(".csv")) {
+            if(!file.getOriginalFilename().contains(".csv")) {
                 throw BusinessExceptionFactory.buildException(BusinessExceptionEnum.NOT_A_CSV);
             }
         }

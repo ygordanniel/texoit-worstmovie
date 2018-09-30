@@ -21,6 +21,10 @@ import java.util.stream.Collectors;
 @Transactional
 public class ProducerServiceImpl extends BaseServiceImpl<ProducerRepository, Producer> implements ProducerService {
 
+    public ProducerServiceImpl(ProducerRepository repository) {
+        super(repository);
+    }
+
     @Override
     public Producer findByName(String name) {
         return this.repository.findByName(name);

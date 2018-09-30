@@ -5,13 +5,13 @@ import com.texoit.worstmovie.entity.dto.MovieDTO;
 import com.texoit.worstmovie.entity.dto.ResponseDTO;
 import com.texoit.worstmovie.entity.dto.YearsDTO;
 import com.texoit.worstmovie.exception.BusinessException;
-import com.texoit.worstmovie.exception.MovieIsWinnerException;
 import com.texoit.worstmovie.service.MovieService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -40,7 +40,7 @@ public class MovieResource {
 
     @GetMapping("/year/winner-count")
     public ResponseEntity<ResponseDTO<YearsDTO>> findAllYearsByWinnerHigherOne(@RequestParam Integer minCount) {
-        return ResponseEntity.ok(new ResponseDTO<>(this.movieService.findAllYearsByWinnerHigherOne(minCount)));
+        return ResponseEntity.ok(new ResponseDTO<>(this.movieService.findAllYearsByWinnerCount(minCount)));
     }
 
     @GetMapping()
@@ -65,7 +65,7 @@ public class MovieResource {
             return ResponseEntity.created(new URI("http://localhost:8080/api/movie")).build();
         } catch (BusinessException e) {
             return ResponseEntity.badRequest().body(new ResponseDTO(e.getExceptionEnum()));
-        } catch (URISyntaxException e) {
+        } catch (URISyntaxException | IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDTO(e.getMessage()));
         }
     }
