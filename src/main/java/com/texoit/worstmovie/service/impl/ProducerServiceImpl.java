@@ -2,8 +2,10 @@ package com.texoit.worstmovie.service.impl;
 
 import com.texoit.worstmovie.entity.Movie;
 import com.texoit.worstmovie.entity.Producer;
+import com.texoit.worstmovie.entity.dto.ProducerDTO;
 import com.texoit.worstmovie.entity.dto.ProducerIntervalAwardDTO;
 import com.texoit.worstmovie.entity.dto.ProducerMinMaxAwardDTO;
+import com.texoit.worstmovie.entity.mapper.ProducerMapper;
 import com.texoit.worstmovie.repository.ProducerRepository;
 import com.texoit.worstmovie.service.ProducerService;
 import org.springframework.stereotype.Service;
@@ -21,13 +23,16 @@ import java.util.stream.Collectors;
 @Transactional
 public class ProducerServiceImpl extends BaseServiceImpl<ProducerRepository, Producer> implements ProducerService {
 
-    public ProducerServiceImpl(ProducerRepository repository) {
+    private ProducerMapper mapper;
+
+    public ProducerServiceImpl(ProducerRepository repository, ProducerMapper producerMapper) {
         super(repository);
+        this.mapper = producerMapper;
     }
 
     @Override
-    public Producer findByName(String name) {
-        return this.repository.findByName(name);
+    public ProducerDTO findByName(String name) {
+        return mapper.producerToProducerDTO(this.repository.findByName(name));
     }
 
     @Override
