@@ -34,7 +34,7 @@ public class ProducerServiceImplTest {
     private ProducerServiceImpl producerService;
 
     @Before
-    public void init() {
+    public void init() throws Exception {
         when(repository.findByName(SOME_PRODUCER_NAME)).thenReturn(EntityUtil.getProducer());
         when(mapper.producerToProducerDTO(any(Producer.class))).thenReturn(EntityUtil.getProducerDTO());
     }

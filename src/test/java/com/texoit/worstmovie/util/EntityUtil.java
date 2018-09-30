@@ -4,6 +4,7 @@ import com.texoit.worstmovie.entity.Movie;
 import com.texoit.worstmovie.entity.Producer;
 import com.texoit.worstmovie.entity.Studio;
 import com.texoit.worstmovie.entity.dto.*;
+import com.texoit.worstmovie.service.impl.StudioServiceImplTest;
 
 import java.util.Arrays;
 
@@ -130,5 +131,11 @@ public class EntityUtil {
         movieBetweenLong2.setTitle("Some Movie Between Long Two");
         betweenLong.setMovies(Arrays.asList(movieBetweenLong1, movieBetweenLong2));
         return betweenLong;
+    }
+
+    public static StudiosWinCountDTO getStudiosWinCountDTO() {
+        StudiosWinCountDTO studiosWinCountDTO = new StudiosWinCountDTO();
+        studiosWinCountDTO.add(new StudioWinCountDTO(StudioServiceImplTest.SOME_STUDIO_NAME, 3));
+        return studiosWinCountDTO;
     }
 }
