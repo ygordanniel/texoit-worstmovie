@@ -76,7 +76,7 @@ public class MovieServiceImpl extends BaseServiceImpl<MovieRepository, Movie> im
         Optional<Movie> found = this.findById(id);
         if(found.isPresent()) {
             if(!found.get().getWinner()) {
-                this.repository.delete(found.get());
+                deleteById(found.get().getId());
             } else {
                 throw BusinessExceptionFactory.buildException(BusinessExceptionEnum.MOVIE_IS_WINNER);
             }
