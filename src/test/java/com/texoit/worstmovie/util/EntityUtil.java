@@ -138,4 +138,21 @@ public class EntityUtil {
         studiosWinCountDTO.add(new StudioWinCountDTO(StudioServiceImplTest.SOME_STUDIO_NAME, 3));
         return studiosWinCountDTO;
     }
+
+    public static ProducerMinMaxAwardDTO getProducerMinMaxAwardDTO() {
+        ProducerMinMaxAwardDTO dto = new ProducerMinMaxAwardDTO();
+        ProducerIntervalAwardDTO min = new ProducerIntervalAwardDTO();
+        min.setProducer("Some Producer");
+        min.setInterval(1L);
+        min.setPreviousWin(2017);
+        min.setFollowingWin(2018);
+        ProducerIntervalAwardDTO max = new ProducerIntervalAwardDTO();
+        max.setProducer("Some Other Producer");
+        max.setInterval(6L);
+        max.setPreviousWin(2010);
+        max.setFollowingWin(2016);
+        dto.setMin(min);
+        dto.setMax(max);
+        return dto;
+    }
 }

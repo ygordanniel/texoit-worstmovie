@@ -6,6 +6,7 @@ import com.texoit.worstmovie.entity.dto.YearsDTO;
 import com.texoit.worstmovie.exception.*;
 import com.texoit.worstmovie.service.MovieService;
 import com.texoit.worstmovie.util.EntityUtil;
+import com.texoit.worstmovie.util.ResponseEntityTestUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import static com.texoit.worstmovie.util.ResponseEntityTestUtil.statusOkBodyNotNull;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -109,8 +111,4 @@ public class MovieResourceTest {
         assertTrue(response.getStatusCode().equals(HttpStatus.CREATED));
     }
 
-    private void statusOkBodyNotNull(ResponseEntity responseEntity) {
-        assertTrue(responseEntity.getStatusCode().equals(HttpStatus.OK));
-        assertNotNull(responseEntity.getBody());
-    }
 }
