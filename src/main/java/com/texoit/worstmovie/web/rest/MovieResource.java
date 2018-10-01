@@ -1,6 +1,5 @@
 package com.texoit.worstmovie.web.rest;
 
-import com.texoit.worstmovie.entity.Movie;
 import com.texoit.worstmovie.entity.dto.MovieDTO;
 import com.texoit.worstmovie.entity.dto.ResponseDTO;
 import com.texoit.worstmovie.entity.dto.YearsDTO;
@@ -11,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -39,13 +39,8 @@ public class MovieResource {
     }
 
     @GetMapping("/year/winner-count")
-    public ResponseEntity<ResponseDTO<YearsDTO>> findAllYearsByWinnerHigherOne(@RequestParam Integer minCount) {
+    public ResponseEntity<ResponseDTO<YearsDTO>> findAllYearsByWinnerCount(@RequestParam Integer minCount) {
         return ResponseEntity.ok(new ResponseDTO<>(this.movieService.findAllYearsByWinnerCount(minCount)));
-    }
-
-    @GetMapping()
-    public ResponseEntity<List<Movie>> findAll() {
-        return ResponseEntity.ok(this.movieService.findAll());
     }
 
     @DeleteMapping("/{id}")
@@ -59,10 +54,10 @@ public class MovieResource {
     }
 
     @PutMapping("/import/csv")
-    public ResponseEntity<ResponseDTO> importFromCsv(@RequestPart(name = "csv", required = false) MultipartFile[] csv) {
+    public ResponseEntity<ResponseDTO> importFromCsv(@RequestPart(name = "csv", required = false) MultipartFile[] csv, HttpServletRequest request) {
         try {
             this.movieService.importFromCsv(csv);
-            return ResponseEntity.created(new URI("http://localhost:8080/api/movie")).build();
+            return ResponseEntity.created(new URI(request.getRequestURL().toString().split("/import")[0])).build();
         } catch (BusinessException e) {
             return ResponseEntity.badRequest().body(new ResponseDTO(e.getExceptionEnum()));
         } catch (URISyntaxException | IOException e) {
