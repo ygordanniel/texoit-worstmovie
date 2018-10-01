@@ -102,6 +102,14 @@ public class MovieResourceTest {
     }
 
     @Test
+    public void importCsvThrowsIOException() throws BusinessException, IOException {
+        when(service.importFromCsv(any())).thenThrow(new IOException());
+        MultipartFile multipartFile = new MockMultipartFile("csv", "movies.pdf", "application/octet-stream", new byte[]{});
+        ResponseEntity<ResponseDTO> response = resource.importFromCsv(new MultipartFile[]{multipartFile}, null);
+        assertTrue(response.getStatusCode().equals(HttpStatus.INTERNAL_SERVER_ERROR));
+    }
+
+    @Test
     public void importCsvOk() throws IOException {
         InputStream csvFileStream = getClass().getClassLoader().getResourceAsStream("movielist.csv");
         MultipartFile multipartFile = new MockMultipartFile("movie.csv", "movielist.csv", "text/csv", csvFileStream);
