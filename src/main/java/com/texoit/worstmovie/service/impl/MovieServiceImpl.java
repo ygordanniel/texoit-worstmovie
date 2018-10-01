@@ -78,7 +78,7 @@ public class MovieServiceImpl extends BaseServiceImpl<MovieRepository, Movie> im
             if(!found.get().getWinner()) {
                 deleteById(found.get().getId());
             } else {
-                throw BusinessExceptionFactory.buildException(BusinessExceptionEnum.MOVIE_IS_WINNER);
+                throw BusinessExceptionFactory.buildException(EnumBusinessException.MOVIE_IS_WINNER);
             }
         }
     }
@@ -131,14 +131,14 @@ public class MovieServiceImpl extends BaseServiceImpl<MovieRepository, Movie> im
 
     private void validateCsvFile(MultipartFile[] multipartFile) throws BusinessException {
         if(Objects.isNull(multipartFile)) {
-            throw BusinessExceptionFactory.buildException(BusinessExceptionEnum.NO_FILE);
+            throw BusinessExceptionFactory.buildException(EnumBusinessException.NO_FILE);
         }
         if(multipartFile.length > 1) {
-            throw BusinessExceptionFactory.buildException(BusinessExceptionEnum.MORE_THAN_ONE_FILE);
+            throw BusinessExceptionFactory.buildException(EnumBusinessException.MORE_THAN_ONE_FILE);
         }
         for (MultipartFile file : multipartFile) {
             if(!file.getOriginalFilename().contains(".csv")) {
-                throw BusinessExceptionFactory.buildException(BusinessExceptionEnum.NOT_A_CSV);
+                throw BusinessExceptionFactory.buildException(EnumBusinessException.NOT_A_CSV);
             }
         }
     }

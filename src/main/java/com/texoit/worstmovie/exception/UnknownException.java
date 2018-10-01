@@ -4,6 +4,6 @@ public class UnknownException extends BusinessException {
 
     public UnknownException() {
         super("unknown_exception");
-        setExceptionEnum(BusinessExceptionEnum.UNKNOWN_EXCEPTION);
+        setExceptionEnum(EnumBusinessException.UNKNOWN_EXCEPTION);
     }
 }

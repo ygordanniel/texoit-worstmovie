@@ -4,6 +4,6 @@ public class NotACSVException extends BusinessException {
 
     public NotACSVException() {
         super("not_a_csv");
-        setExceptionEnum(BusinessExceptionEnum.NOT_A_CSV);
+        setExceptionEnum(EnumBusinessException.NOT_A_CSV);
     }
 }

@@ -2,17 +2,17 @@ package com.texoit.worstmovie.exception;
 
 public class BusinessException extends Exception {
 
-    private BusinessExceptionEnum exceptionEnum;
+    private EnumBusinessException exceptionEnum;
 
     public BusinessException(String message) {
         super(message);
     }
 
-    public BusinessExceptionEnum getExceptionEnum() {
+    public EnumBusinessException getExceptionEnum() {
         return exceptionEnum;
     }
 
-    public void setExceptionEnum(BusinessExceptionEnum exceptionEnum) {
+    public void setExceptionEnum(EnumBusinessException exceptionEnum) {
         this.exceptionEnum = exceptionEnum;
     }
 }

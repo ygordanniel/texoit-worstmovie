@@ -4,6 +4,6 @@ public class NoFileException extends BusinessException {
 
     public NoFileException() {
         super("no_file");
-        setExceptionEnum(BusinessExceptionEnum.NO_FILE);
+        setExceptionEnum(EnumBusinessException.NO_FILE);
     }
 }

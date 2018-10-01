@@ -1,6 +1,6 @@
 package com.texoit.worstmovie.entity.dto;
 
-import com.texoit.worstmovie.exception.BusinessExceptionEnum;
+import com.texoit.worstmovie.exception.EnumBusinessException;
 
 import java.io.Serializable;
 
@@ -11,7 +11,7 @@ public class ErrorDTO implements Serializable {
     private String code;
     private String message;
 
-    public ErrorDTO(BusinessExceptionEnum businessEnum) {
+    public ErrorDTO(EnumBusinessException businessEnum) {
         this.code = businessEnum.getCode();
         this.message = businessEnum.getMessage();
     }
