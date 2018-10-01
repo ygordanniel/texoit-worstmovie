@@ -55,6 +55,30 @@ public class MovieServiceImplTest {
     }
 
     @Test
+    public void searchAllMovies() {
+        when(movieRepository.findAll()).thenReturn(singletonList(EntityUtil.getMovie()));
+        when(mapper.movieToMovieDTO(any(Movie.class))).thenReturn(EntityUtil.getMovieDTO());
+        List<MovieDTO> allDTO = movieService.findAllDTO();
+        assertTrue(allDTO.size() == 1);
+        assertEquals(new Long(1), allDTO.get(0).getId());
+    }
+
+    @Test
+    public void searchOneMovieFindOne() {
+        when(movieRepository.findById(anyLong())).thenReturn(Optional.of(EntityUtil.getMovie()));
+        when(mapper.movieToMovieDTO(any(Movie.class))).thenReturn(EntityUtil.getMovieDTO());
+        MovieDTO dto = movieService.findOneDTO(1L);
+        assertEquals(new Long(1), dto.getId());
+    }
+
+    @Test
+    public void searchOneMovieFindNone() {
+        when(movieRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
+        MovieDTO dto = movieService.findOneDTO(1L);
+        assertNull(dto);
+    }
+
+    @Test
     public void searchAllMoviesByYearFindOne() {
         when(movieRepository.findAllByYear(anyInt())).thenReturn(singletonList(EntityUtil.getMovie()));
         List<MovieDTO> allByYear = this.movieService.findAllByYear(2018);

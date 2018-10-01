@@ -50,6 +50,23 @@ public class MovieServiceImpl extends BaseServiceImpl<MovieRepository, Movie> im
     }
 
     @Override
+    public List<MovieDTO> findAllDTO() {
+        return findAll()
+            .stream()
+            .map(mapper::movieToMovieDTO)
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public MovieDTO findOneDTO(Long id) {
+        Optional<Movie> one = findById(id);
+        if(one.isPresent()) {
+            return mapper.movieToMovieDTO(one.get());
+        }
+        return null;
+    }
+
+    @Override
     public List<MovieDTO> findAllByYear(Integer year) {
         return this.repository.findAllByYear(year)
             .stream()

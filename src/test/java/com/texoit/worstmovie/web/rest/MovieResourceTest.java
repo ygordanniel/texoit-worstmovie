@@ -1,5 +1,6 @@
 package com.texoit.worstmovie.web.rest;
 
+import com.texoit.worstmovie.entity.Movie;
 import com.texoit.worstmovie.entity.dto.MovieDTO;
 import com.texoit.worstmovie.entity.dto.ResponseDTO;
 import com.texoit.worstmovie.entity.dto.YearsDTO;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 
 import static com.texoit.worstmovie.util.ResponseEntityTestUtil.statusOkBodyNotNull;
 import static java.util.Collections.singletonList;
@@ -38,8 +40,29 @@ public class MovieResourceTest {
     @InjectMocks
     private MovieResource resource;
 
-    @Before
-    public void init() {
+    @Test
+    public void searchAllMovies() {
+        when(service.findAllDTO()).thenReturn(singletonList(EntityUtil.getMovieDTO()));
+        ResponseEntity<ResponseDTO<List<MovieDTO>>> response = resource.findAll();
+        ResponseEntityTestUtil.statusOkBodyNotNull(response);
+        assertTrue(response.getBody().getContent().size() == 1);
+        assertEquals(EntityUtil.getMovieDTO().getId(), response.getBody().getContent().get(0).getId());
+    }
+
+    @Test
+    public void searchOneMovieFindOne() {
+        when(service.findOneDTO(anyLong())).thenReturn(EntityUtil.getMovieDTO());
+        ResponseEntity<ResponseDTO<MovieDTO>> response = resource.findOne(1L);
+        ResponseEntityTestUtil.statusOkBodyNotNull(response);
+        assertEquals(EntityUtil.getMovieDTO().getId(), response.getBody().getContent().getId());
+    }
+
+    @Test
+    public void searchOneMovieFindNone() {
+        when(service.findOneDTO(anyLong())).thenReturn(null);
+        ResponseEntity<ResponseDTO<MovieDTO>> response = resource.findOne(1L);
+        ResponseEntityTestUtil.statusOkBodyNotNull(response);
+        assertNull(response.getBody().getContent());
     }
 
     @Test

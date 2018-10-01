@@ -12,6 +12,10 @@ import java.util.List;
 
 public interface MovieService extends BaseService<Movie> {
 
+    List<MovieDTO> findAllDTO();
+
+    MovieDTO findOneDTO(Long id);
+
     List<MovieDTO> findAllByYear(Integer year);
 
     List<MovieDTO> findAllByYearAndWinner(Integer year, Boolean winner);

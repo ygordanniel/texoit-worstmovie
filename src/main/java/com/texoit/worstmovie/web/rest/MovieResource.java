@@ -27,6 +27,16 @@ public class MovieResource {
         this.movieService = movieService;
     }
 
+    @GetMapping()
+    public ResponseEntity<ResponseDTO<List<MovieDTO>>> findAll() {
+        return ResponseEntity.ok(new ResponseDTO<>(this.movieService.findAllDTO()));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseDTO<MovieDTO>> findOne(@PathVariable Long id) {
+        return ResponseEntity.ok(new ResponseDTO<>(this.movieService.findOneDTO(id)));
+    }
+
     @GetMapping("/year")
     public ResponseEntity<ResponseDTO<List<MovieDTO>>> findAllByYear(@RequestParam Integer year, @RequestParam(required = false) Boolean winner) {
         List<MovieDTO> found;
